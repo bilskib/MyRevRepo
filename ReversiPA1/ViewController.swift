@@ -192,7 +192,6 @@ class ViewController: UIViewController {
             game.scanActivePlayer(activePlayer: game.activePlayer!, gameboard: gameBoard)
             printBoard()
             drawBoard()
-            
             if !(game.hasValidMove(activePlayer: game.activePlayer!, gameboard: gameBoard)) {
                 alertGameOver()
             }
