@@ -10,7 +10,6 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    //var game = GameModel()
     var gameC: GameController!
     
     @IBOutlet weak var positionLabel: UILabel!
@@ -109,6 +108,7 @@ class ViewController: UIViewController {
         print("activePlayer/currentPlayer (0-BLACK):", gameC.gameModel.activePlayer!.playerId)
         
         print("BLACK @: ", gameC.gameModel.locateDisks(color: .black, gameboard: gameC.gameModel.gameBoard))
+        //gameC.gameModel.locateDisks(color: .black, gameboard: gameC.gameModel.gameBoard)[0].x
         print("WHITE @: ", gameC.gameModel.locateDisks(color: .white, gameboard: gameC.gameModel.gameBoard))
         print("VALID @: ", gameC.gameModel.locateDisks(color: .valid, gameboard: gameC.gameModel.gameBoard))
         whiteScoreLabel.text = String(gameC.gameModel.gameBoard.countDisk(gameBoard: gameC.gameModel.gameBoard, color: "white"))
@@ -166,16 +166,17 @@ class ViewController: UIViewController {
                     alertInvalidMove()
                 }
             } else if (gameC.gameModel.activePlayer!.playerId == allPlayers[1].playerId) {
-                if gameC.gameModel.gameBoard[posX,posY] == .valid {
-                    resetCurrent(gameboard: gameC.gameModel.gameBoard)
-                    gameC.gameModel.gameBoard[posX,posY] = .whiteLast
-                    resetValid(gameboard: gameC.gameModel.gameBoard)
-                    gameC.gameModel.flipDisk(activePlayer: gameC.gameModel.activePlayer, gameBoard: gameC.gameModel.gameBoard, x: posX, y: posY)
-                    gameC.gameModel.switchPlayer()
+//                if gameC.gameModel.gameBoard[posX,posY] == .valid {
+//                    resetCurrent(gameboard: gameC.gameModel.gameBoard)
+//                    gameC.gameModel.gameBoard[posX,posY] = .whiteLast
+//                    resetValid(gameboard: gameC.gameModel.gameBoard)
+//                    gameC.gameModel.flipDisk(activePlayer: gameC.gameModel.activePlayer, gameBoard: gameC.gameModel.gameBoard, x: posX, y: posY)
+//                    gameC.gameModel.switchPlayer()
+                gameC.aiMove()
                 } else {
                     alertInvalidMove()
                 }
-            }
+            //}
         } else {
             informationLabel.text = "have to pass"
             gameC.gameModel.switchPlayer()
@@ -189,7 +190,6 @@ class ViewController: UIViewController {
         gameC.gameModel.scanActivePlayer(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)
         printBoard()
         drawBoard()
-        //undoButton.isHidden = false
         
         if !(gameC.gameModel.hasValidMove(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)) {
             //alertNoMove()

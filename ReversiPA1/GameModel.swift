@@ -15,31 +15,43 @@ class GameModel: NSObject, GKGameModel {
     var players: [GKGameModelPlayer]? { return allPlayers }
     var activePlayer: GKGameModelPlayer? { return currentPlayer }   // black
     
-    //BART
-    var gameBoard = Board(rows: 8, columns: 8)
-    var move = Move(x:3, y:5)
-    var currentPlayer: Player = allPlayers[0]
-    
     func setGameModel(_ gameModel: GKGameModel) {
-        // TODO
+        let sourceModel = gameModel as! GameModel
+        self.gameBoard = sourceModel.gameBoard
+        self.currentPlayer = sourceModel.currentPlayer
     }
     
     func gameModelUpdates(for player: GKGameModelPlayer) -> [GKGameModelUpdate]? {
-        //return true // TODO
-        return [move]
+        let moves: [Move] = locateDisks(color: .valid, gameboard: gameBoard)
+        if moves.isEmpty { return nil }
+        return moves
     }
     
     
     func apply(_ gameModelUpdate: GKGameModelUpdate) {
-        // TODO 
+        let move = gameModelUpdate as! Move
+        gameBoard[move.x, move.y] = currentPlayer.disk
+        flipDisk(activePlayer: self.activePlayer, gameBoard: self.gameBoard, x: move.x, y:move.y)
+        
+        //if hasValidMove(activePlayer: , gameboard: gameBoard) {
+            switchPlayer()
+        //}
     }
+    
+
     
     // NSCopying protocol requirements - TODO
     func copy(with zone: NSZone? = nil) -> Any {
-        return true
+        let copy = GameModel()
+        copy.setGameModel(self)
+        return copy
     }
     
     
+    //BART
+    var gameBoard = Board(rows: 8, columns: 8)
+    var move = Move(x:3, y:5)
+    var currentPlayer: Player = allPlayers[0]
     
     func addDiskToBoard(_ type: BoardTypeCell, x: Int, y: Int) {
         self.gameBoard[x, y] = type
@@ -52,31 +64,31 @@ class GameModel: NSObject, GKGameModel {
     }
     
     // Find disks of given color
-    func locateDisks (color: BoardTypeCell, gameboard: Board) -> ([(Int, Int)]) {
-        var tab = [(Int,Int)]()
+    func locateDisks (color: BoardTypeCell, gameboard: Board) -> ([Move]) {
+        var tab = [Move]()
         tab.removeAll()
         for i in 0...7 {
             for j in 0...7 {
                 if color == .black {
                     if gameboard[i,j] == .black || gameboard[i,j] == .blackLast {
-                        tab.append((i,j))
+                        tab.append(Move(x:i,y:j))
                     }
                 } else if color == .white {
                     if gameboard[i,j] == .white || gameboard[i,j] == .whiteLast {
-                        tab.append((i,j))
+                        tab.append(Move(x:i,y:j))
                     }
                 } else if color == .valid {
                     if gameboard[i,j] == .valid {
-                        tab.append((i,j))
+                        tab.append(Move(x:i,y:j))
+                    }
                 }
-            }
             }
         }
         return tab
     }
     
+    // to consider activePlayersLastCellType type
     func flipDisk(activePlayer: GKGameModelPlayer?, gameBoard: Board, x: Int, y: Int) {
-        
         let activePlayersCellType: BoardTypeCell = (currentPlayer == allPlayers[0]) ? .black : .white
         let opponentPlayersCellType: BoardTypeCell = (activePlayersCellType == .black) ? .white : .black
         var newCell = (x,y)
@@ -107,7 +119,6 @@ class GameModel: NSObject, GKGameModel {
                             diskToFlip.removeLast(diskToFlipCounter)
                             continue
                         } else {
-                            
                             switch gameBoard[newCell.0,newCell.1] {
                             case opponentPlayersCellType:
                                 diskToFlip.removeLast(diskToFlipCounter)
@@ -221,7 +232,7 @@ class GameModel: NSObject, GKGameModel {
     
     // Perform a board scan for given player (i.e. only black disks)
     func scanActivePlayer (activePlayer: GKGameModelPlayer, gameboard: Board) {
-        var tab = [(Int,Int)]()
+        var tab = [Move]()
         
         if currentPlayer == allPlayers[0] {
             tab = locateDisks(color: .black, gameboard: gameboard)
@@ -230,7 +241,7 @@ class GameModel: NSObject, GKGameModel {
                 print("tab of black is empty")
             } else {
                 for i in 0...tab.count-1 {
-                    scanNeighbourCell(activePlayer: activePlayer, gameBoard: gameboard, x: tab[i].0, y: tab[i].1)
+                    scanNeighbourCell(activePlayer: activePlayer, gameBoard: gameboard, x: tab[i].x, y: tab[i].y)
                 }
                 tab.removeAll()
             }
@@ -241,7 +252,7 @@ class GameModel: NSObject, GKGameModel {
                 print("tab of white is empty")
             } else {
                 for i in 0...tab.count-1 {
-                    scanNeighbourCell(activePlayer: activePlayer, gameBoard: gameboard, x: tab[i].0, y: tab[i].1)
+                    scanNeighbourCell(activePlayer: activePlayer, gameBoard: gameboard, x: tab[i].x, y: tab[i].y)
                 }
                 tab.removeAll()
             }

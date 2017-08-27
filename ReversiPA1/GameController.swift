@@ -28,5 +28,54 @@ class GameController: NSObject {
         gameModel.gameBoard[4,4] = .white
     }
     
+    fileprivate func makeMove(_ x: Int,_ y: Int) {
+        
+        //if gameModel.gameBoard[x,y] == .valid {
+            view.resetCurrent(gameboard: gameModel.gameBoard)
+            gameModel.gameBoard[x,y] = .whiteLast
+            view.resetValid(gameboard: gameModel.gameBoard)
+            gameModel.flipDisk(activePlayer: gameModel.activePlayer, gameBoard: gameModel.gameBoard, x: x, y: y)
+            gameModel.switchPlayer()
+        //}
+        
+//        addChip(gameModel.currentPlayer.chip, x, y)
+//        flipUIDiscs(x, y)
+//        updateBoard()
+//        gameView.showGameInfo(-1)
+//        
+//        let white = numberOfDiscs(gameModel.board, .white)
+//        let black = numberOfDiscs(gameModel.board, .black)
+//        
+//        gameModel.currentPlayer = gameModel.currentPlayer.opponent
+//    
+    }
+    
+    func aiMove()
+    {
+        let delay = 1.0
+        let time = DispatchTime.now() + Double(Int64(delay*Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+        
+        let mQueue = DispatchQueue.main
+        let cQueue = DispatchQueue.global(qos: DispatchQoS.QoSClass.userInitiated)
+        cQueue.asyncAfter(deadline: time,
+                          execute: {
+//                            switch numberOfEmptySquares(self.gameModel.board) {
+//                            case 45...60: //openning game
+//                                self.strategist.maxLookAheadDepth = self.aiLevels[self.aiCurrentLevel][GameStage.Openning]
+//                            case 20...44: //middle game
+//                                self.strategist.maxLookAheadDepth = self.aiLevels[self.aiCurrentLevel][GameStage.Middle]
+//                            case 0...19:
+//                                self.strategist.maxLookAheadDepth = self.aiLevels[self.aiCurrentLevel][GameStage.End]
+//                            default:
+//                                break;
+//                            }
+                            
+                            let move = self.strategist.bestMoveForActivePlayer() as! Move
+                            mQueue.async(execute: {
+                                self.makeMove(move.x, move.y)
+                            } )
+        })
+    }
+    
 }
 
