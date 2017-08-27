@@ -9,12 +9,14 @@
 import UIKit
 import GameplayKit
 
-class Game: NSObject, GKGameModel {
+class GameModel: NSObject, GKGameModel {
     
     // GKGameModel protocol requirements
     var players: [GKGameModelPlayer]? { return allPlayers }
     var activePlayer: GKGameModelPlayer? { return currentPlayer }   // black
     
+    //BART
+    var gameBoard = Board(rows: 8, columns: 8)
     var move = Move(x:3, y:5)
     var currentPlayer: Player = allPlayers[0]
     
@@ -37,17 +39,10 @@ class Game: NSObject, GKGameModel {
         return true
     }
     
-    var board = Board(rows: 8, columns: 8)
+    
     
     func addDiskToBoard(_ type: BoardTypeCell, x: Int, y: Int) {
-        self.board[x, y] = type
-    }
-    
-    func setInitialBoard(gameBoard: Board) {
-        gameBoard[3,4] = .black
-        gameBoard[4,3] = .black
-        gameBoard[3,3] = .white
-        gameBoard[4,4] = .white
+        self.gameBoard[x, y] = type
     }
 
     

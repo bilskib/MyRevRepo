@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F37421A1F52F97A00D1624A /* GameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F3742191F52F97A00D1624A /* GameController.swift */; };
 		0F7EE6211F3EF16E00CDA925 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7EE6201F3EF16E00CDA925 /* AppDelegate.swift */; };
 		0F7EE6231F3EF16E00CDA925 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7EE6221F3EF16E00CDA925 /* ViewController.swift */; };
 		0F7EE6261F3EF16E00CDA925 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F7EE6241F3EF16E00CDA925 /* Main.storyboard */; };
@@ -14,11 +15,12 @@
 		0F7EE6331F3EF58000CDA925 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7EE6321F3EF58000CDA925 /* Player.swift */; };
 		0F7EE6351F3EF5E400CDA925 /* Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7EE6341F3EF5E400CDA925 /* Move.swift */; };
 		0F7EE6371F3EF5F200CDA925 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7EE6361F3EF5F200CDA925 /* Board.swift */; };
-		0F7EE6391F3EF60200CDA925 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7EE6381F3EF60200CDA925 /* Game.swift */; };
+		0F7EE6391F3EF60200CDA925 /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7EE6381F3EF60200CDA925 /* GameModel.swift */; };
 		0F7EE63B1F40FAB300CDA925 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F7EE63A1F40FAB300CDA925 /* Media.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0F3742191F52F97A00D1624A /* GameController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameController.swift; sourceTree = "<group>"; };
 		0F7EE61D1F3EF16E00CDA925 /* ReversiPA1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReversiPA1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F7EE6201F3EF16E00CDA925 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0F7EE6221F3EF16E00CDA925 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -28,7 +30,7 @@
 		0F7EE6321F3EF58000CDA925 /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		0F7EE6341F3EF5E400CDA925 /* Move.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Move.swift; sourceTree = "<group>"; };
 		0F7EE6361F3EF5F200CDA925 /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
-		0F7EE6381F3EF60200CDA925 /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		0F7EE6381F3EF60200CDA925 /* GameModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
 		0F7EE63A1F40FAB300CDA925 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = ../Media.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -70,7 +72,8 @@
 				0F7EE6321F3EF58000CDA925 /* Player.swift */,
 				0F7EE6341F3EF5E400CDA925 /* Move.swift */,
 				0F7EE6361F3EF5F200CDA925 /* Board.swift */,
-				0F7EE6381F3EF60200CDA925 /* Game.swift */,
+				0F7EE6381F3EF60200CDA925 /* GameModel.swift */,
+				0F3742191F52F97A00D1624A /* GameController.swift */,
 				0F7EE62C1F3EF16E00CDA925 /* Info.plist */,
 			);
 			path = ReversiPA1;
@@ -150,11 +153,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				0F7EE6351F3EF5E400CDA925 /* Move.swift in Sources */,
-				0F7EE6391F3EF60200CDA925 /* Game.swift in Sources */,
+				0F7EE6391F3EF60200CDA925 /* GameModel.swift in Sources */,
 				0F7EE6231F3EF16E00CDA925 /* ViewController.swift in Sources */,
 				0F7EE6371F3EF5F200CDA925 /* Board.swift in Sources */,
 				0F7EE6331F3EF58000CDA925 /* Player.swift in Sources */,
 				0F7EE6211F3EF16E00CDA925 /* AppDelegate.swift in Sources */,
+				0F37421A1F52F97A00D1624A /* GameController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -320,6 +324,7 @@
 				0F7EE6311F3EF16E00CDA925 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

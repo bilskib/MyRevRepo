@@ -10,8 +10,8 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    var game = Game()
-    var gameBoard = Board(rows: 8, columns: 8)
+    //var game = GameModel()
+    var gameC: GameController!
     
     @IBOutlet weak var positionLabel: UILabel!
     @IBOutlet weak var informationLabel: UILabel!
@@ -21,8 +21,8 @@ class ViewController: UIViewController {
     
     func alertGameOver() {
         let gameOverAlert = UIAlertController(title: "Game over", message: "", preferredStyle: UIAlertControllerStyle.alert)
-        let blackDisks: Int = gameBoard.countDisk(gameBoard: gameBoard, color: "black")
-        let whiteDisks: Int = gameBoard.countDisk(gameBoard: gameBoard, color: "white")
+        let blackDisks: Int = gameC.gameModel.gameBoard.countDisk(gameBoard: gameC.gameModel.gameBoard, color: "black")
+        let whiteDisks: Int = gameC.gameModel.gameBoard.countDisk(gameBoard: gameC.gameModel.gameBoard, color: "white")
         
         if blackDisks > whiteDisks {
             gameOverAlert.message = "Black has won \(blackDisks):\(whiteDisks)!"
@@ -42,11 +42,11 @@ class ViewController: UIViewController {
     
     func alertNoMove() {
         let noMoveAlert = UIAlertController(title: "You have to pass", message: "", preferredStyle: UIAlertControllerStyle.alert)
-        if game.activePlayer!.playerId == allPlayers[0].playerId {
+        if gameC.gameModel.activePlayer!.playerId == allPlayers[0].playerId {
             noMoveAlert.message = "Switching to White"
             noMoveAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
             self.present(noMoveAlert, animated: true, completion: nil)
-        } else if game.activePlayer!.playerId == allPlayers[1].playerId {
+        } else if gameC.gameModel.activePlayer!.playerId == allPlayers[1].playerId {
             noMoveAlert.message = "Switching to Black"
             noMoveAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
             self.present(noMoveAlert, animated: true, completion: nil)
@@ -66,7 +66,7 @@ class ViewController: UIViewController {
                 let tagNumber = 100 + i * 10 + j
                 let cellButton = view.viewWithTag(tagNumber) as? UIButton
                     cellButton?.setImage(nil, for: .normal)
-                gameBoard[i,j] = .empty
+                gameC.gameModel.gameBoard[i,j] = .empty
             }
         }
     }
@@ -75,8 +75,8 @@ class ViewController: UIViewController {
     func resetValid(gameboard: Board) {
         for i in 0..<8 {
             for j in 0..<8 {
-                if gameBoard[i,j] == .valid {
-                    gameBoard[i,j] = .empty
+                if gameC.gameModel.gameBoard[i,j] == .valid {
+                    gameC.gameModel.gameBoard[i,j] = .empty
                 }
             }
         }
@@ -85,28 +85,34 @@ class ViewController: UIViewController {
     func resetCurrent(gameboard: Board) {
         for i in 0..<8 {
             for j in 0..<8 {
-                if gameBoard[i,j] == .blackLast {
-                    gameBoard[i,j] = .black
-                } else if gameBoard[i,j] == .whiteLast {
-                    gameBoard[i,j] = .white
+                if gameC.gameModel.gameBoard[i,j] == .blackLast {
+                    gameC.gameModel.gameBoard[i,j] = .black
+                } else if gameC.gameModel.gameBoard[i,j] == .whiteLast {
+                    gameC.gameModel.gameBoard[i,j] = .white
                 }
             }
         }
     }
     
     // print the actual board to the console output
-    func printBoard () {
+    func printBoard() {
         print(".................................................................................................")
         print("  0     1     2     3     4     5     6     7  /")
         for i in 0..<8 {
             print("-------------------------------------------------")
             for j in 0..<8{
-                print( gameBoard[i,j], terminator: "|")
+                print( gameC.gameModel.gameBoard[i,j], terminator: "|")
             }
             print(i)
         }
         print("-------------------------------------------------")
-        print("activePlayer/currentPlayer (0-BLACK):", game.activePlayer!.playerId)
+        print("activePlayer/currentPlayer (0-BLACK):", gameC.gameModel.activePlayer!.playerId)
+        
+        print("BLACK @: ", gameC.gameModel.locateDisks(color: .black, gameboard: gameC.gameModel.gameBoard))
+        print("WHITE @: ", gameC.gameModel.locateDisks(color: .white, gameboard: gameC.gameModel.gameBoard))
+        print("VALID @: ", gameC.gameModel.locateDisks(color: .valid, gameboard: gameC.gameModel.gameBoard))
+        whiteScoreLabel.text = String(gameC.gameModel.gameBoard.countDisk(gameBoard: gameC.gameModel.gameBoard, color: "white"))
+        blackScoreLabel.text = String(gameC.gameModel.gameBoard.countDisk(gameBoard: gameC.gameModel.gameBoard, color: "black"))
     }
     
     // draw the board based on cell type
@@ -119,15 +125,15 @@ class ViewController: UIViewController {
                     print("Error! Can't find button with tag \(tagNumber)")
                     continue
                 }
-                if gameBoard[i,j].rawValue == 1 {
+                if gameC!.gameModel.gameBoard[i,j].rawValue == 1 {
                     cellButton.setImage(UIImage(named: "blackPiece.png"), for: .normal)
-                } else if gameBoard[i,j].rawValue == 2 {
+                } else if gameC!.gameModel.gameBoard[i,j].rawValue == 2 {
                     cellButton.setImage(UIImage(named: "whitePiece.png"), for: .normal)
-                } else if gameBoard[i,j].rawValue == 3 {
+                } else if gameC!.gameModel.gameBoard[i,j].rawValue == 3 {
                     cellButton.setImage(UIImage(named: "availableMove.png"), for: .normal)
-                } else if gameBoard[i,j].rawValue == 11 {
+                } else if gameC!.gameModel.gameBoard[i,j].rawValue == 11 {
                     cellButton.setImage(UIImage(named: "blackPieceLast.png"), for: .normal)
-                } else if gameBoard[i,j].rawValue == 22 {
+                } else if gameC!.gameModel.gameBoard[i,j].rawValue == 22 {
                     cellButton.setImage(UIImage(named: "whitePieceLast.png"), for: .normal)
                 } else {
                     cellButton.setImage(nil, for: .normal)
@@ -145,94 +151,80 @@ class ViewController: UIViewController {
         posY = (posY-100)%10
         
         informationLabel.text = nil
-        game.scanActivePlayer(activePlayer: game.activePlayer!, gameboard: gameBoard)
+        gameC.gameModel.scanActivePlayer(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)
         
-        if game.hasValidMove(activePlayer: game.activePlayer!, gameboard: gameBoard) {
+        if gameC.gameModel.hasValidMove(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard) {
             
-            if (game.activePlayer!.playerId == allPlayers[0].playerId) {
-                if gameBoard[posX,posY] == .valid {
-                    resetCurrent(gameboard: gameBoard)
-                    gameBoard[posX,posY] = .blackLast
-                    resetValid(gameboard: gameBoard)
-                    game.flipDisk(activePlayer: game.activePlayer, gameBoard: gameBoard, x: posX, y: posY)
-                    game.switchPlayer()
+            if (gameC.gameModel.activePlayer!.playerId == allPlayers[0].playerId) {
+                if gameC.gameModel.gameBoard[posX,posY] == .valid {
+                    resetCurrent(gameboard: gameC.gameModel.gameBoard)
+                    gameC.gameModel.gameBoard[posX,posY] = .blackLast
+                    resetValid(gameboard: gameC.gameModel.gameBoard)
+                    gameC.gameModel.flipDisk(activePlayer: gameC.gameModel.activePlayer, gameBoard: gameC.gameModel.gameBoard, x: posX, y: posY)
+                    gameC.gameModel.switchPlayer()
                 } else {
                     alertInvalidMove()
                 }
-            } else if (game.activePlayer!.playerId == allPlayers[1].playerId) {
-                if gameBoard[posX,posY] == .valid {
-                    resetCurrent(gameboard: gameBoard)
-                    gameBoard[posX,posY] = .whiteLast
-                    resetValid(gameboard: gameBoard)
-                    game.flipDisk(activePlayer: game.activePlayer, gameBoard: gameBoard, x: posX, y: posY)
-                    game.switchPlayer()
+            } else if (gameC.gameModel.activePlayer!.playerId == allPlayers[1].playerId) {
+                if gameC.gameModel.gameBoard[posX,posY] == .valid {
+                    resetCurrent(gameboard: gameC.gameModel.gameBoard)
+                    gameC.gameModel.gameBoard[posX,posY] = .whiteLast
+                    resetValid(gameboard: gameC.gameModel.gameBoard)
+                    gameC.gameModel.flipDisk(activePlayer: gameC.gameModel.activePlayer, gameBoard: gameC.gameModel.gameBoard, x: posX, y: posY)
+                    gameC.gameModel.switchPlayer()
                 } else {
                     alertInvalidMove()
                 }
             }
         } else {
             informationLabel.text = "have to pass"
-            game.switchPlayer()
-            resetValid(gameboard: gameBoard)
-            game.flipDisk(activePlayer: game.activePlayer, gameBoard: gameBoard, x: posX, y: posY)
+            gameC.gameModel.switchPlayer()
+            resetValid(gameboard: gameC.gameModel.gameBoard)
+            gameC.gameModel.flipDisk(activePlayer: gameC.gameModel.activePlayer, gameBoard: gameC.gameModel.gameBoard, x: posX, y: posY)
             drawBoard()
         }
         
         drawBoard()
-        resetValid(gameboard: gameBoard)
-        game.scanActivePlayer(activePlayer: game.activePlayer!, gameboard: gameBoard)
+        resetValid(gameboard: gameC.gameModel.gameBoard)
+        gameC.gameModel.scanActivePlayer(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)
         printBoard()
         drawBoard()
         //undoButton.isHidden = false
         
-        if !(game.hasValidMove(activePlayer: game.activePlayer!, gameboard: gameBoard)) {
+        if !(gameC.gameModel.hasValidMove(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)) {
             //alertNoMove()
             informationLabel.text = "have to pass"
-            game.switchPlayer()
-            game.scanActivePlayer(activePlayer: game.activePlayer!, gameboard: gameBoard)
+            gameC.gameModel.switchPlayer()
+            gameC.gameModel.scanActivePlayer(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)
             printBoard()
             drawBoard()
-            if !(game.hasValidMove(activePlayer: game.activePlayer!, gameboard: gameBoard)) {
+            if !(gameC.gameModel.hasValidMove(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)) {
                 alertGameOver()
             }
         }
-        print("BLACK @: ", game.locateDisks(color: .black, gameboard: gameBoard))
-        print("WHITE @: ", game.locateDisks(color: .white, gameboard: gameBoard))
-        print("VALID @: ", game.locateDisks(color: .valid, gameboard: gameBoard))
-        whiteScoreLabel.text = String(gameBoard.countDisk(gameBoard: gameBoard, color: "white"))
-        blackScoreLabel.text = String(gameBoard.countDisk(gameBoard: gameBoard, color: "black"))
+        
     }
     
     @IBAction func newGame(_ sender: Any) {
-        resetBoard(gameboard: gameBoard)
+        resetBoard(gameboard: gameC.gameModel.gameBoard)
         informationLabel.text = nil
-        game.currentPlayer = allPlayers[0]   // - BLACK first
-        game.setInitialBoard(gameBoard: gameBoard)
-        game.scanActivePlayer(activePlayer: game.activePlayer!, gameboard: gameBoard)
+        gameC.gameModel.currentPlayer = allPlayers[0]   // - BLACK first
+        gameC!.setInitialBoard()
+        //setInitialBoard()
+        gameC.gameModel.scanActivePlayer(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)
         drawBoard()
         printBoard()
-        
-        print("BLACK @: ", game.locateDisks(color: .black, gameboard: gameBoard))
-        print("WHITE @: ", game.locateDisks(color: .white, gameboard: gameBoard))
-        print("VALID @: ", game.locateDisks(color: .valid, gameboard: gameBoard))
-        whiteScoreLabel.text = String(gameBoard.countDisk(gameBoard: gameBoard, color: "white"))
-        blackScoreLabel.text = String(gameBoard.countDisk(gameBoard: gameBoard, color: "black"))
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        game.currentPlayer = allPlayers[0]
-        game.setInitialBoard(gameBoard: gameBoard)
-        game.scanActivePlayer(activePlayer: game.activePlayer!, gameboard: gameBoard)
+        self.gameC = GameController(view: self)
+        gameC.gameModel.currentPlayer = allPlayers[0]
+        gameC!.setInitialBoard()
+        gameC.gameModel.scanActivePlayer(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)
         drawBoard()
         printBoard()
-        
-        print("BLACK @: ", game.locateDisks(color: .black, gameboard: gameBoard))
-        print("WHITE @: ", game.locateDisks(color: .white, gameboard: gameBoard))
-        print("VALID @: ", game.locateDisks(color: .valid, gameboard: gameBoard))
-        whiteScoreLabel.text = String(gameBoard.countDisk(gameBoard: gameBoard, color: "white"))
-        blackScoreLabel.text = String(gameBoard.countDisk(gameBoard: gameBoard, color: "black"))
     }
 
     override func didReceiveMemoryWarning() {
