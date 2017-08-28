@@ -38,6 +38,19 @@ class GameModel: NSObject, GKGameModel {
         //}
     }
     
+    func score(for player: GKGameModelPlayer) -> Int {
+        let player = player as! Player
+        var playerResult: Int
+        
+        playerResult = player.playerScore
+        
+        let black = locateDisks(color: .black, gameboard: gameBoard).count
+        let white = locateDisks(color: .white, gameboard: gameBoard).count
+        
+        playerResult = white - black
+        
+        return playerResult
+    }
 
     
     // NSCopying protocol requirements - TODO
@@ -107,6 +120,8 @@ class GameModel: NSObject, GKGameModel {
                     continue
                 } else if gameBoard[newCell.0,newCell.1] == .empty {
                     continue
+                } else if gameBoard[newCell.0,newCell.1] == .valid {
+                    continue
                 } else if gameBoard[newCell.0,newCell.1] == opponentPlayersCellType {
                     diskToFlipCounter = 0
                     while (newCell.0 >= 0 && newCell.1 >= 0 && newCell.0 <= 7 && newCell.1 <= 7) && gameBoard[newCell.0,newCell.1] == opponentPlayersCellType {
@@ -156,7 +171,7 @@ class GameModel: NSObject, GKGameModel {
             newCell = (x,y)
             newCell.0 += direction.value.x
             newCell.1 += direction.value.y
-            print("base cell:", baseCell, "modified with:", direction.key, direction.value, "is: ", newCell)
+            //print("base cell:", baseCell, "modified with:", direction.key, direction.value, "is: ", newCell)
             
             if (newCell.0 >= 0 && newCell.1 >= 0 && newCell.0 <= 7 && newCell.1 <= 7) {
                 if gameBoard[newCell.0,newCell.1] == activePlayersCellType {
@@ -171,7 +186,7 @@ class GameModel: NSObject, GKGameModel {
                             newCell.1 += direction.value.y
                     }
                     if (newCell.0 >= 0 && newCell.1 >= 0 && newCell.0 <= 7 && newCell.1 <= 7) {
-                        print("scan for diections:", direction.key)
+                        //print("scan for diections:", direction.key)
                         switch gameBoard[newCell.0,newCell.1] {
                         case opponentPlayersCellType:
                             continue
@@ -183,7 +198,7 @@ class GameModel: NSObject, GKGameModel {
                             continue
                         case .empty:
                             gameBoard[newCell.0,newCell.1] = .valid
-                            print("now valid will be:", [newCell.0,newCell.1])
+                            //print("now valid will be:", [newCell.0,newCell.1])
                             continue
                         case .valid:
                             continue
@@ -200,7 +215,7 @@ class GameModel: NSObject, GKGameModel {
                         newCell.1 += direction.value.y
                     }
                     if (newCell.0 >= 0 && newCell.1 >= 0 && newCell.0 <= 7 && newCell.1 <= 7) {
-                        print("scan for diections:", direction.key)
+                        //print("scan for diections:", direction.key)
                         switch gameBoard[newCell.0,newCell.1] {
                         case opponentPlayersCellType:
                             continue
@@ -212,7 +227,7 @@ class GameModel: NSObject, GKGameModel {
                             continue
                         case .empty:
                             gameBoard[newCell.0,newCell.1] = .valid
-                            print("now valid will be:", [newCell.0,newCell.1])
+                            //print("now valid will be:", [newCell.0,newCell.1])
                             continue
                         case .valid:
                             continue
@@ -241,6 +256,7 @@ class GameModel: NSObject, GKGameModel {
                 print("tab of black is empty")
             } else {
                 for i in 0...tab.count-1 {
+                    print("tab[", i, "] =", tab[i].x, tab[i].y )
                     scanNeighbourCell(activePlayer: activePlayer, gameBoard: gameboard, x: tab[i].x, y: tab[i].y)
                 }
                 tab.removeAll()
@@ -252,6 +268,7 @@ class GameModel: NSObject, GKGameModel {
                 print("tab of white is empty")
             } else {
                 for i in 0...tab.count-1 {
+                    print("tab[", i, "] =", tab[i].x, tab[i].y )
                     scanNeighbourCell(activePlayer: activePlayer, gameBoard: gameboard, x: tab[i].x, y: tab[i].y)
                 }
                 tab.removeAll()

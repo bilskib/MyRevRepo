@@ -31,11 +31,18 @@ class GameController: NSObject {
     fileprivate func makeMove(_ x: Int,_ y: Int) {
         
         //if gameModel.gameBoard[x,y] == .valid {
+            gameModel.scanActivePlayer(activePlayer: gameModel.activePlayer!, gameboard: gameModel.gameBoard)
             view.resetCurrent(gameboard: gameModel.gameBoard)
-            gameModel.gameBoard[x,y] = .whiteLast
-            view.resetValid(gameboard: gameModel.gameBoard)
-            gameModel.flipDisk(activePlayer: gameModel.activePlayer, gameBoard: gameModel.gameBoard, x: x, y: y)
-            gameModel.switchPlayer()
+            view.printBoard()
+            if gameModel.gameBoard[x,y] == .valid {
+                //gameModel.gameBoard[x,y] = .whiteLast
+                //view.resetValid(gameboard: gameModel.gameBoard)
+                gameModel.flipDisk(activePlayer: gameModel.activePlayer, gameBoard: gameModel.gameBoard, x: x, y: y)
+                view.drawBoard()
+                view.printBoard()
+                gameModel.switchPlayer()
+                gameModel.currentPlayer = gameModel.currentPlayer.oppositePlayer
+        }
         //}
         
 //        addChip(gameModel.currentPlayer.chip, x, y)
@@ -48,6 +55,11 @@ class GameController: NSObject {
 //        
 //        gameModel.currentPlayer = gameModel.currentPlayer.opponent
 //    
+    }
+    
+    func aiMove2() {
+        let move = self.strategist.bestMoveForActivePlayer() as! Move
+        self.makeMove(move.x, move.y)
     }
     
     func aiMove()

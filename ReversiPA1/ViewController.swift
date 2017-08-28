@@ -58,6 +58,9 @@ class ViewController: UIViewController {
         invalidMoveAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
         self.present(invalidMoveAlert, animated: true, completion: nil)
     }
+    
+    
+    
     // make the whole board filled with "empty" cells
     func resetBoard(gameboard: Board) {
         for i in 0..<8 {
@@ -97,9 +100,9 @@ class ViewController: UIViewController {
     func printBoard() {
         print(".................................................................................................")
         print("  0     1     2     3     4     5     6     7  /")
-        for i in 0..<8 {
+        for i in 0...7 {
             print("-------------------------------------------------")
-            for j in 0..<8{
+            for j in 0...7{
                 print( gameC.gameModel.gameBoard[i,j], terminator: "|")
             }
             print(i)
@@ -142,6 +145,8 @@ class ViewController: UIViewController {
         }
     }
     
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
     @IBAction func action(_ sender: UIButton)
     {
         // Converting button tag into X, Y coordinates on the game board.
@@ -150,60 +155,95 @@ class ViewController: UIViewController {
         var posY: Int! = sender.tag
         posY = (posY-100)%10
         
-        informationLabel.text = nil
         gameC.gameModel.scanActivePlayer(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)
         
-        if gameC.gameModel.hasValidMove(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard) {
-            
-            if (gameC.gameModel.activePlayer!.playerId == allPlayers[0].playerId) {
-                if gameC.gameModel.gameBoard[posX,posY] == .valid {
-                    resetCurrent(gameboard: gameC.gameModel.gameBoard)
-                    gameC.gameModel.gameBoard[posX,posY] = .blackLast
-                    resetValid(gameboard: gameC.gameModel.gameBoard)
-                    gameC.gameModel.flipDisk(activePlayer: gameC.gameModel.activePlayer, gameBoard: gameC.gameModel.gameBoard, x: posX, y: posY)
-                    gameC.gameModel.switchPlayer()
-                } else {
-                    alertInvalidMove()
-                }
-            } else if (gameC.gameModel.activePlayer!.playerId == allPlayers[1].playerId) {
-//                if gameC.gameModel.gameBoard[posX,posY] == .valid {
-//                    resetCurrent(gameboard: gameC.gameModel.gameBoard)
-//                    gameC.gameModel.gameBoard[posX,posY] = .whiteLast
-//                    resetValid(gameboard: gameC.gameModel.gameBoard)
-//                    gameC.gameModel.flipDisk(activePlayer: gameC.gameModel.activePlayer, gameBoard: gameC.gameModel.gameBoard, x: posX, y: posY)
-//                    gameC.gameModel.switchPlayer()
-                gameC.aiMove()
-                } else {
-                    alertInvalidMove()
-                }
-            //}
-        } else {
-            informationLabel.text = "have to pass"
-            gameC.gameModel.switchPlayer()
-            resetValid(gameboard: gameC.gameModel.gameBoard)
-            gameC.gameModel.flipDisk(activePlayer: gameC.gameModel.activePlayer, gameBoard: gameC.gameModel.gameBoard, x: posX, y: posY)
-            drawBoard()
+        if gameC.gameModel.gameBoard[posX,posY] == .valid {
+            gameC.gameModel.gameBoard[posX,posY] = .blackLast
         }
+        drawBoard()
+        printBoard()
+        gameC.gameModel.flipDisk(activePlayer: gameC.gameModel.activePlayer, gameBoard: gameC.gameModel.gameBoard, x: posX, y: posY)
         
         drawBoard()
+        printBoard()
         resetValid(gameboard: gameC.gameModel.gameBoard)
+        resetCurrent(gameboard: gameC.gameModel.gameBoard)
+        printBoard()
+        //gameC.gameModel.currentPlayer = gameC.gameModel.currentPlayer.oppositePlayer
         gameC.gameModel.scanActivePlayer(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)
         printBoard()
         drawBoard()
-        
-        if !(gameC.gameModel.hasValidMove(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)) {
-            //alertNoMove()
-            informationLabel.text = "have to pass"
-            gameC.gameModel.switchPlayer()
-            gameC.gameModel.scanActivePlayer(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)
-            printBoard()
-            drawBoard()
-            if !(gameC.gameModel.hasValidMove(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)) {
-                alertGameOver()
-            }
-        }
-        
+        gameC.gameModel.switchPlayer()
+        //if gameC.gameModel.gameBoard[posX,posY] == .valid {
+            gameC.aiMove2()
+        drawBoard()
+        printBoard()
+        //}
+        resetCurrent(gameboard: gameC.gameModel.gameBoard)
+        resetValid(gameboard: gameC.gameModel.gameBoard)
+    
     }
+//        informationLabel.text = nil
+//        gameC.gameModel.scanActivePlayer(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)
+//        
+//        if gameC.gameModel.hasValidMove(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard) {
+//            
+//            if (gameC.gameModel.activePlayer!.playerId == allPlayers[0].playerId) {
+//                if gameC.gameModel.gameBoard[posX,posY] == .valid {
+//                    resetCurrent(gameboard: gameC.gameModel.gameBoard)
+//                    gameC.gameModel.gameBoard[posX,posY] = .blackLast
+//                    resetValid(gameboard: gameC.gameModel.gameBoard)
+//                    gameC.gameModel.flipDisk(activePlayer: gameC.gameModel.activePlayer, gameBoard: gameC.gameModel.gameBoard, x: posX, y: posY)
+//                    //gameC.gameModel.switchPlayer()
+//                    gameC.gameModel.currentPlayer = gameC.gameModel.currentPlayer.oppositePlayer
+//                    gameC.aiMove2()
+//                } else {
+//                    alertInvalidMove()
+//                }
+//            } else if (gameC.gameModel.activePlayer!.playerId == allPlayers[1].playerId) {
+////                if gameC.gameModel.gameBoard[posX,posY] == .valid {
+////                    resetCurrent(gameboard: gameC.gameModel.gameBoard)
+////                    gameC.gameModel.gameBoard[posX,posY] = .whiteLast
+////                    resetValid(gameboard: gameC.gameModel.gameBoard)
+////                    gameC.gameModel.flipDisk(activePlayer: gameC.gameModel.activePlayer, gameBoard: gameC.gameModel.gameBoard, x: posX, y: posY)
+////                    gameC.gameModel.switchPlayer()
+//                resetCurrent(gameboard: gameC.gameModel.gameBoard)
+//                gameC.aiMove2()
+//                drawBoard()
+//                resetValid(gameboard: gameC.gameModel.gameBoard)
+//                gameC.gameModel.flipDisk(activePlayer: gameC.gameModel.activePlayer, gameBoard: gameC.gameModel.gameBoard, x: posX, y: posY)
+//                gameC.gameModel.switchPlayer()
+//                } else {
+//                    alertInvalidMove()
+//                }
+//            //}
+//        } else {
+//            informationLabel.text = "have to pass"
+//            gameC.gameModel.switchPlayer()
+//            resetValid(gameboard: gameC.gameModel.gameBoard)
+//            gameC.gameModel.flipDisk(activePlayer: gameC.gameModel.activePlayer, gameBoard: gameC.gameModel.gameBoard, x: posX, y: posY)
+//            drawBoard()
+//        }
+//        
+//        drawBoard()
+//        resetValid(gameboard: gameC.gameModel.gameBoard)
+//        gameC.gameModel.scanActivePlayer(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)
+//        printBoard()
+//        drawBoard()
+//        
+//        if !(gameC.gameModel.hasValidMove(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)) {
+//            //alertNoMove()
+//            informationLabel.text = "have to pass"
+//            gameC.gameModel.switchPlayer()
+//            gameC.gameModel.scanActivePlayer(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)
+//            printBoard()
+//            drawBoard()
+//            if !(gameC.gameModel.hasValidMove(activePlayer: gameC.gameModel.activePlayer!, gameboard: gameC.gameModel.gameBoard)) {
+//                alertGameOver()
+//            }
+//        }
+//        
+//    }
     
     @IBAction func newGame(_ sender: Any) {
         resetBoard(gameboard: gameC.gameModel.gameBoard)
@@ -215,7 +255,9 @@ class ViewController: UIViewController {
         drawBoard()
         printBoard()
     }
-
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
